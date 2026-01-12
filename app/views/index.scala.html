@@ -1,0 +1,40 @@
+@(books: Seq[models.Book])
+
+@main("MyShelf") {
+<div class="row">
+  <a class="btn" href="@routes.BookController.createForm.url">+ Add Book</a>
+</div>
+
+@if(books.isEmpty) {
+<p>No books yet. Add your first one!</p>
+} else {
+<table>
+  <thead>
+  <tr>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Pages</th>
+    <th>Published Date</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  @for(book <- books) {
+  <tr>
+    <td><a href="@routes.BookController.show(book.id).url">@book.title</a></td>
+    <td>@book.author</td>
+    <td>@book.pages.getOrElse("-")</td>
+    <td>@book.publishedDate</td>
+    <td class="row">
+      <a class="btn" href="@routes.BookController.show(book.id).url">Show</a>
+      <a class="btn" href="@routes.BookController.editForm(book.id).url">Edit</a>
+      <form method="POST" action="@routes.BookController.delete(book.id).url" style="margin:0;">
+        <button class="btn btn-danger" type="submit">Delete</button>
+      </form>
+    </td>
+  </tr>
+  }
+  </tbody>
+</table>
+}
+}

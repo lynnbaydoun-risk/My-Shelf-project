@@ -1,0 +1,26 @@
+@(id: Long, form: Form[BookData])(implicit request: MessagesRequestHeader)
+
+@main("Edit Book") {
+<div class="card">
+    <form method="POST" action="@routes.BookController.update(id)">
+        @helper.CSRF.formField
+
+        <label>Title *</label>
+        @helper.inputText(form("title"))
+
+        <label>Author *</label>
+        @helper.inputText(form("author"))
+
+        <label>Pages (optional)</label>
+        @helper.inputText(form("pages"))
+
+        <label>Published Date *</label>
+        @helper.inputText(form("publishedDate"), Symbol("type") -> "date")
+
+        <div class="row" style="margin-top: 12px;">
+            <button class="btn" type="submit">Save</button>
+            <a class="btn" href="@routes.BookController.show(id)">Cancel</a>
+        </div>
+    </form>
+</div>
+}

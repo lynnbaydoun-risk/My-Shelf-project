@@ -1,0 +1,20 @@
+@*
+ * This template is called from the `index` template. This template
+ * handles the rendering of the page header and body tags. It takes
+ * two arguments, a `String` for the title of the page and an `Html`
+ * object to insert into the body of the page.
+ *@
+@(title: String)(content: Html)
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>@title</title>
+    <link rel="stylesheet" href="@routes.Assets.versioned("main.css")">
+
+</head>
+<body>
+<h1>@title</h1>
+@content
+</body>
+</html>
