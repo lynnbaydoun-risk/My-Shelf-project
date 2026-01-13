@@ -11,6 +11,9 @@
         <label>Author *</label>
         @helper.inputText(form("author"))
 
+        <label>Cover *</label>
+        @helper.inputText(form("image"), '_label -> "Image filename")
+
         <label>Pages (optional)</label>
         @helper.inputText(form("pages"))
 

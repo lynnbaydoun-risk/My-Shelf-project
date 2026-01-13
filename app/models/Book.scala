@@ -7,5 +7,6 @@ case class Book(
                  title: String,
                  author: String,
                  pages: Option[Int],
-                 publishedDate: LocalDate
+                 publishedDate: LocalDate,
+                 image: String
                )

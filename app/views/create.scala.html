@@ -13,6 +13,9 @@
         @helper.inputText(form("author"))
         @form("author").error.map(e => <div class="error">{e.message}</div>)
 
+        <label>Cover *</label>
+        @helper.inputText(form("image"), '_label -> "Image filename")
+
         <label>Pages (optional)</label>
         @helper.inputText(form("pages"))
 

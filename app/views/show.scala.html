@@ -5,6 +5,9 @@
 <p><b>Author:</b> @book.author</p>
 <p><b>Pages:</b> @book.pages.getOrElse("-")</p>
 <p><b>Published Date:</b> @book.publishedDate</p>
+<p><img src="@routes.Assets.versioned("images/" + book.image)"
+    alt="@book.title"
+    width="200"></p>
 
 <div class="row" style="margin-top: 12px;">
     <a class="btn" href="@routes.BookController.index">Back</a>

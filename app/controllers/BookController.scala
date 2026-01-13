@@ -20,7 +20,8 @@ class BookController @Inject()(
       "title" -> nonEmptyText,
       "author" -> nonEmptyText,
       "pages" -> optional(number(min = 1)),
-      "publishedDate" -> localDate("yyyy-MM-dd")
+      "publishedDate" -> localDate("yyyy-MM-dd"),
+      "image" -> nonEmptyText
     )(BookData.apply)(BookData.unapply)
   )
 
@@ -49,7 +50,8 @@ class BookController @Inject()(
           title = data.title,
           author = data.author,
           pages = data.pages,
-          publishedDate = data.publishedDate
+          publishedDate = data.publishedDate,
+          image = data.image
         )
         repo.create(book).map(_ => Redirect(routes.BookController.index))
       }
@@ -63,7 +65,7 @@ class BookController @Inject()(
   def editForm(id: Long): Action[AnyContent] = Action.async { implicit request =>
     repo.findById(id).map {
       case Some(book) =>
-        val filled = bookForm.fill(BookData(book.title, book.author, book.pages, book.publishedDate))
+        val filled = bookForm.fill(BookData(book.title, book.author, book.pages, book.publishedDate, book.image))
         Ok(views.html.edit(id, filled))
       case None => NotFound("Book not found")
     }
@@ -78,7 +80,8 @@ class BookController @Inject()(
           title = data.title,
           author = data.author,
           pages = data.pages,
-          publishedDate = data.publishedDate
+          publishedDate = data.publishedDate,
+          image = data.image
         )
         repo.update(id, updated).map(_ => Redirect(routes.BookController.show(id)))
       }
@@ -90,5 +93,6 @@ case class BookData(
                      title: String,
                      author: String,
                      pages: Option[Int],
-                     publishedDate: LocalDate
+                     publishedDate: LocalDate,
+                     image: String
                    )
