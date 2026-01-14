@@ -20,8 +20,7 @@ class BookController @Inject()(
       "title" -> nonEmptyText,
       "author" -> nonEmptyText,
       "pages" -> optional(number(min = 1)),
-      "publishedDate" -> localDate("yyyy-MM-dd"),
-      "image" -> nonEmptyText
+      "publishedDate" -> localDate("yyyy-MM-dd")
     )(BookData.apply)(BookData.unapply)
   )
 
@@ -43,20 +42,53 @@ class BookController @Inject()(
   }
 
   def create(): Action[AnyContent] = Action.async { implicit request =>
-    bookForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(views.html.create(formWithErrors))),
-      data => {
-        val book = Book(
-          title = data.title,
-          author = data.author,
-          pages = data.pages,
-          publishedDate = data.publishedDate,
-          image = data.image
+    request.body.asMultipartFormData match {
+
+      case Some(formData) =>
+        bookForm.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(views.html.create(formWithErrors))
+            ),
+
+          data =>
+            formData.file("image") match {
+              case Some(image) =>
+                val filename =
+                  java.util.UUID.randomUUID().toString + "_" + image.filename
+
+                image.ref.copyTo(
+                  new java.io.File(s"public/images/$filename"),
+                  replace = true
+                )
+
+                val book = Book(
+                  title = data.title,
+                  author = data.author,
+                  pages = data.pages,
+                  publishedDate = data.publishedDate,
+                  image = filename
+                )
+
+                repo.create(book).map(_ =>
+                  Redirect(routes.BookController.index)
+                )
+
+              case None =>
+                Future.successful(
+                  BadRequest(views.html.create(
+                    bookForm.fill(data)
+                      .withError("image", "Image is required")
+                  ))
+                )
+            }
         )
-        repo.create(book).map(_ => Redirect(routes.BookController.index))
-      }
-    )
+
+      case None =>
+        Future.successful(BadRequest("Invalid multipart request"))
+    }
   }
+
 
   def delete(id: Long): Action[AnyContent] = Action.async { implicit request =>
     repo.delete(id).map(_ => Redirect(routes.BookController.index))
@@ -65,34 +97,67 @@ class BookController @Inject()(
   def editForm(id: Long): Action[AnyContent] = Action.async { implicit request =>
     repo.findById(id).map {
       case Some(book) =>
-        val filled = bookForm.fill(BookData(book.title, book.author, book.pages, book.publishedDate, book.image))
+        val filled = bookForm.fill(BookData(book.title, book.author, book.pages, book.publishedDate))
         Ok(views.html.edit(id, filled))
       case None => NotFound("Book not found")
     }
   }
 
   def update(id: Long): Action[AnyContent] = Action.async { implicit request =>
-    bookForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(views.html.edit(id, formWithErrors))),
-      data => {
-        val updated = Book(
-          id = id,
-          title = data.title,
-          author = data.author,
-          pages = data.pages,
-          publishedDate = data.publishedDate,
-          image = data.image
+    request.body.asMultipartFormData match {
+      case Some(formData) =>
+        bookForm.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(views.html.edit(id, formWithErrors))),
+
+          data => {
+            repo.findById(id).flatMap {
+              case Some(existingBook) =>
+
+                val imageFile = formData.file("image")
+
+                val imageName = imageFile match {
+                  case Some(image) =>
+                    val filename =
+                      java.util.UUID.randomUUID().toString + "_" + image.filename
+                    image.ref.copyTo(
+                      new java.io.File(s"public/images/$filename"),
+                      replace = true
+                    )
+                    filename
+
+                  case None =>
+                    existingBook.image // keep old image
+                }
+
+                val updated = existingBook.copy(
+                  title = data.title,
+                  author = data.author,
+                  pages = data.pages,
+                  publishedDate = data.publishedDate,
+                  image = imageName
+                )
+
+                repo.update(id, updated).map(_ =>
+                  Redirect(routes.BookController.show(id))
+                )
+
+              case None =>
+                Future.successful(NotFound("Book not found"))
+            }
+          }
         )
-        repo.update(id, updated).map(_ => Redirect(routes.BookController.show(id)))
-      }
-    )
+
+      case None =>
+        Future.successful(BadRequest("Invalid form data"))
+    }
   }
+
 }
 
 case class BookData(
                      title: String,
                      author: String,
                      pages: Option[Int],
-                     publishedDate: LocalDate,
-                     image: String
+                     publishedDate: LocalDate
                    )

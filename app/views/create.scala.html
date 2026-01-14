@@ -1,31 +1,35 @@
 @(form: Form[BookData])(implicit request: MessagesRequestHeader)
 
 @main("Add a Book") {
-<div class="card">
-    <form method="POST" action="@routes.BookController.create.url">
-        @helper.CSRF.formField
+    <div class="card">
+        <form method="POST"
+        action="@routes.BookController.create.url"
+        enctype="multipart/form-data">
 
-        <label>Title *</label>
-        @helper.inputText(form("title"))
-        @form("title").error.map(e => <div class="error">{e.message}</div>)
+            @helper.CSRF.formField
 
-        <label>Author *</label>
-        @helper.inputText(form("author"))
-        @form("author").error.map(e => <div class="error">{e.message}</div>)
+            <label>Title</label>
+            @helper.inputText(form("title"))
 
-        <label>Cover *</label>
-        @helper.inputText(form("image"), '_label -> "Image filename")
+            <label>Author</label>
+            @helper.inputText(form("author"))
 
-        <label>Pages (optional)</label>
-        @helper.inputText(form("pages"))
+            <label>Cover</label>
+            <input type="file" name="image">
 
-        <label>Published Date *</label>
-        @helper.inputText(form("publishedDate"), Symbol("type") -> "date")
+            <label>Pages (optional)</label>
+            @helper.inputText(form("pages"))
 
-        <div class="row" style="margin-top: 12px;">
-            <button class="btn" type="submit">Create</button>
-            <a class="btn" href="@routes.BookController.index.url">Cancel</a>
-        </div>
-    </form>
-</div>
+            <label>Published Date</label>
+            @helper.inputText(
+                form("publishedDate"),
+                Symbol("type") -> "date"
+            )
+
+            <div class="row" style="margin-top: 12px;">
+                <button class="btn" type="submit">Create</button>
+                <a class="btn" href="@routes.BookController.index.url">Cancel</a>
+            </div>
+        </form>
+    </div>
 }
