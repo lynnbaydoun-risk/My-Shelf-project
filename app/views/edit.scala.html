@@ -8,22 +8,27 @@
 
             @helper.CSRF.formField
 
-            <label style="display: none;">Title</label>
-            @helper.inputText(form("title"))
+            @helper.inputText(form("title"), Symbol("_label") -> "Title")
 
-            <label style="display: none;">Author</label>
-            @helper.inputText(form("author"))
+            @helper.inputText(form("author"), Symbol("_label") -> "Author")
 
-            <label style="display: none;">Cover</label>
-            <input type="file" name="image">
-            <small>Leave empty to keep current cover</small>
 
-            <label style="display: none;">Pages (optional)</label>
-            @helper.inputText(form("pages"))
 
-            <label style="display: none;">Published Date</label>
+            @helper.inputText(
+                form("image"),
+                Symbol("_label") -> "Cover",
+                Symbol("type") -> "file",
+                Symbol("name") -> "image",
+            )
+@*            <label>Cover</label>*@
+@*            <input type="file" name="image">*@
+@*            <small>Leave empty to keep current cover</small>*@
+
+            @helper.inputText(form("pages"), Symbol("_label") -> "Pages (optional)")
+
             @helper.inputText(
                 form("publishedDate"),
+                Symbol("_label") -> "Published Date",
                 Symbol("type") -> "date"
             )
 

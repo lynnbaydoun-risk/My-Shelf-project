@@ -8,23 +8,21 @@
 
             @helper.CSRF.formField
 
-            <label>Title</label>
-            @helper.inputText(form("title"))
+            @helper.inputText(form("title"), '_label -> "Title")
 
-            <label>Author</label>
-            @helper.inputText(form("author"))
+            @helper.inputText(form("author"), '_label -> "Author")
 
             <label>Cover</label>
             <input type="file" name="image">
 
-            <label>Pages (optional)</label>
-            @helper.inputText(form("pages"))
+            @helper.inputText(form("pages"), '_label -> "Pages (optional)")
 
-            <label>Published Date</label>
             @helper.inputText(
                 form("publishedDate"),
+                '_label -> "Published Date",
                 Symbol("type") -> "date"
             )
+
 
             <div class="row" style="margin-top: 12px;">
                 <button class="btn" type="submit">Create</button>

@@ -33,7 +33,7 @@ class BookRepository @Inject()(
   def update(id: Long, updated: Book): Future[Int] =
     db.run(
       books.filter(_.id === id)
-        .map(b => (b.title, b.author, b.pages, b.publishedDate))
-        .update((updated.title, updated.author, updated.pages, updated.publishedDate))
+        .map(b => (b.title, b.author, b.pages, b.publishedDate, b.image))
+        .update((updated.title, updated.author, updated.pages, updated.publishedDate, updated.image))
     )
 }
