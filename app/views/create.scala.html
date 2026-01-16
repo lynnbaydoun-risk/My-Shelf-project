@@ -8,18 +8,18 @@
 
             @helper.CSRF.formField
 
-            @helper.inputText(form("title"), '_label -> "Title")
+            @helper.inputText(form("title"), Symbol("_label") -> "Title")
 
-            @helper.inputText(form("author"), '_label -> "Author")
+            @helper.inputText(form("author"), Symbol("_label") -> "Author")
 
             <label>Cover</label>
             <input type="file" name="image">
 
-            @helper.inputText(form("pages"), '_label -> "Pages (optional)")
+            @helper.inputText(form("pages"), Symbol("_label") -> "Pages (optional)")
 
             @helper.inputText(
                 form("publishedDate"),
-                '_label -> "Published Date",
+                Symbol("_label") -> "Published Date",
                 Symbol("type") -> "date"
             )
 

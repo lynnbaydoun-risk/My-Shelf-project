@@ -127,7 +127,7 @@ class BookController @Inject()(
                     filename
 
                   case None =>
-                    existingBook.image // keep old image
+                    existingBook.image
                 }
 
                 val updated = existingBook.copy(
